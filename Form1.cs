@@ -103,8 +103,17 @@ namespace pk2pk
             else
             {
                 richTextBox1.AppendText(String.Format("Invalid file supplied. ({0}{1})\r\n", filename,extension));
+                goto quit;
             }
-            invalidchk: if (!verifychk(data)) richTextBox1.AppendText(String.Format("Invalid checksum. Is the file encrypted? ({0}{1})\r\n", filename, extension));
+
+        invalidchk:
+            {
+                if (!verifychk(data))
+                {
+                    richTextBox1.AppendText(String.Format("Invalid checksum. Is the file encrypted? ({0}{1})\r\n", filename, extension));
+                    goto quit;
+                }
+            } 
             
             // Output
             string ext = "";
@@ -119,9 +128,12 @@ namespace pk2pk
                 ext = ".pkx";
 
             File.WriteAllBytes(foldername + "\\" + filename + ext, newdata);
-            richTextBox1.AppendText("----------\r\n"); 
-            richTextBox1.SelectionStart = richTextBox1.Text.Length;
-            richTextBox1.ScrollToCaret();
+        quit:
+            {
+                richTextBox1.AppendText("----------\r\n");
+                richTextBox1.SelectionStart = richTextBox1.Text.Length;
+                richTextBox1.ScrollToCaret();
+            }
         }
         private byte[] convertPK3toPK4(byte[] pk3)
         {
