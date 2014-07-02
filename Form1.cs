@@ -69,6 +69,8 @@ namespace pk2pk
             long len = fi.Length;
             byte[] data = new Byte[100];
             byte[] newdata = new Byte[136];
+            int game = 0;
+
             if (len == 100 && RB_I3.Checked)
             {
                 data = File.ReadAllBytes(path);
@@ -81,6 +83,8 @@ namespace pk2pk
                     newdata = convertPK4toPK5(newdata);
                     newdata = convertPK5toPK6(newdata);
                 }
+
+                game = 4;
             }
             else if ((len == 136 || len == 236) && RB_I4.Checked)
             {
@@ -89,6 +93,8 @@ namespace pk2pk
                 newdata = convertPK4toPK5(data);
                 if (RB_O6.Checked)
                     newdata = convertPK5toPK6(newdata);
+
+                game = 5;
             }
             else if ((len == 136 || len == 220) && RB_I5.Checked)
             {
@@ -99,6 +105,8 @@ namespace pk2pk
                     data = convertPK4toPK5(data);
                 }
                 newdata = convertPK5toPK6(data);
+
+                game = 6;
             }
             else
             {
@@ -126,8 +134,9 @@ namespace pk2pk
                 ext = ".pkm";
             if (RB_PKM.Checked && RB_O6.Checked)
                 ext = ".pkx";
-
-            File.WriteAllBytes(foldername + "\\" + filename + ext, newdata);
+            string newname = foldername + "\\" + filename + ext;
+            if (newname == path) newname = foldername + "\\" + filename + " - " + game.ToString() + "th" + ext;
+            File.WriteAllBytes(newname,newdata);
         quit:
             {
                 richTextBox1.AppendText("----------\r\n");
@@ -438,34 +447,42 @@ namespace pk2pk
             DataTable CT45 = Char4to5();
             byte[] nicknamestr = new Byte[24];
             string nickname = "";
-            nicknamestr[22] = nicknamestr[23] = 0xFF;
-            for (int i = 0; i < 24; i += 2)
-            {
-                int val = BitConverter.ToUInt16(pk5, 0x48 + i);
-                if (val == 0xFFFF)
-                {   // If given character is a terminator, stop conversion.
-                    break;
-                }
-                // find entry
-                int newval = (int)CT45.Rows.Find(val)[1];
-                Array.Copy(BitConverter.GetBytes(newval), 0, pk5, 0x48 + i, 2);
-                nickname += (char)newval;
-            }
-
-            byte[] OTstr = new Byte[24];
-            OTstr[22] = OTstr[23] = 0xFF;
             string trainer = "";
-            for (int i = 0; i < 24; i += 2)
+            nicknamestr[22] = nicknamestr[23] = 0xFF;
+            try
             {
-                int val = BitConverter.ToUInt16(pk5, 0x68 + i);
-                if (val == 0xFFFF)
-                {   // If given character is a terminator, stop conversion.
-                    break;
+                for (int i = 0; i < 24; i += 2)
+                {
+                    int val = BitConverter.ToUInt16(pk5, 0x48 + i);
+                    if (val == 0xFFFF)
+                    {   // If given character is a terminator, stop conversion.
+                        break;
+                    }
+                    // find entry
+                    int newval = (int)CT45.Rows.Find(val)[1];
+                    Array.Copy(BitConverter.GetBytes(newval), 0, pk5, 0x48 + i, 2);
+                    nickname += (char)newval;
                 }
-                // find entry
-                int newval = (int)CT45.Rows.Find(val)[1];
-                trainer += (char)newval;
-                Array.Copy(BitConverter.GetBytes(newval), 0, pk5, 0x68 + i, 2);
+
+                byte[] OTstr = new Byte[24];
+                OTstr[22] = OTstr[23] = 0xFF;
+                for (int i = 0; i < 24; i += 2)
+                {
+                    int val = BitConverter.ToUInt16(pk5, 0x68 + i);
+                    if (val == 0xFFFF)
+                    {   // If given character is a terminator, stop conversion.
+                        break;
+                    }
+                    // find entry
+                    int newval = (int)CT45.Rows.Find(val)[1];
+                    trainer += (char)newval;
+                    Array.Copy(BitConverter.GetBytes(newval), 0, pk5, 0x68 + i, 2);
+                }
+            } catch (Exception e)
+            {
+                richTextBox1.AppendText("Invalid name character, assuming already PK5 format. Error Below.\r\n");
+                richTextBox1.AppendText(e.ToString() + "\r\n");
+                return pk4;
             }
             // Reset Friendship
             pk5[0x14] = (byte)getBaseFriendship(species);
