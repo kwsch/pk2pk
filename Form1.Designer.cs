@@ -38,13 +38,14 @@
             this.RB_O5 = new System.Windows.Forms.RadioButton();
             this.RB_O4 = new System.Windows.Forms.RadioButton();
             this.GB_Settings = new System.Windows.Forms.GroupBox();
+            this.B_Options = new System.Windows.Forms.Button();
             this.RB_PKM = new System.Windows.Forms.RadioButton();
             this.RB_PKN = new System.Windows.Forms.RadioButton();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.B_Clear = new System.Windows.Forms.Button();
             this.pBar1 = new System.Windows.Forms.ProgressBar();
             this.B_Help = new System.Windows.Forms.Button();
-            this.B_Options = new System.Windows.Forms.Button();
+            this.B_Open = new System.Windows.Forms.Button();
             this.GB_InGen.SuspendLayout();
             this.GB_OutGen.SuspendLayout();
             this.GB_Settings.SuspendLayout();
@@ -156,6 +157,17 @@
             this.GB_Settings.TabStop = false;
             this.GB_Settings.Text = "Output Settings";
             // 
+            // B_Options
+            // 
+            this.B_Options.Location = new System.Drawing.Point(72, 28);
+            this.B_Options.Name = "B_Options";
+            this.B_Options.Size = new System.Drawing.Size(22, 22);
+            this.B_Options.TabIndex = 11;
+            this.B_Options.Text = "☀";
+            this.B_Options.UseVisualStyleBackColor = true;
+            this.B_Options.Visible = false;
+            this.B_Options.Click += new System.EventHandler(this.B_Options_Click);
+            // 
             // RB_PKM
             // 
             this.RB_PKM.AutoSize = true;
@@ -192,9 +204,9 @@
             // 
             // B_Clear
             // 
-            this.B_Clear.Location = new System.Drawing.Point(244, 80);
+            this.B_Clear.Location = new System.Drawing.Point(285, 80);
             this.B_Clear.Name = "B_Clear";
-            this.B_Clear.Size = new System.Drawing.Size(80, 22);
+            this.B_Clear.Size = new System.Drawing.Size(40, 22);
             this.B_Clear.TabIndex = 8;
             this.B_Clear.Text = "Clear Text";
             this.B_Clear.UseVisualStyleBackColor = true;
@@ -218,16 +230,15 @@
             this.B_Help.UseVisualStyleBackColor = true;
             this.B_Help.Click += new System.EventHandler(this.B_Help_Click);
             // 
-            // B_Options
+            // B_Open
             // 
-            this.B_Options.Location = new System.Drawing.Point(72, 28);
-            this.B_Options.Name = "B_Options";
-            this.B_Options.Size = new System.Drawing.Size(22, 22);
-            this.B_Options.TabIndex = 11;
-            this.B_Options.Text = "☀";
-            this.B_Options.UseVisualStyleBackColor = true;
-            this.B_Options.Visible = false;
-            this.B_Options.Click += new System.EventHandler(this.B_Options_Click);
+            this.B_Open.Location = new System.Drawing.Point(244, 80);
+            this.B_Open.Name = "B_Open";
+            this.B_Open.Size = new System.Drawing.Size(42, 22);
+            this.B_Open.TabIndex = 11;
+            this.B_Open.Text = "Open";
+            this.B_Open.UseVisualStyleBackColor = true;
+            this.B_Open.Click += new System.EventHandler(this.B_Open_Click);
             // 
             // Form1
             // 
@@ -235,6 +246,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(354, 272);
+            this.Controls.Add(this.B_Open);
             this.Controls.Add(this.B_Help);
             this.Controls.Add(this.pBar1);
             this.Controls.Add(this.B_Clear);
@@ -277,6 +289,7 @@
         private System.Windows.Forms.ProgressBar pBar1;
         private System.Windows.Forms.Button B_Help;
         private System.Windows.Forms.Button B_Options;
+        private System.Windows.Forms.Button B_Open;
     }
 }
 

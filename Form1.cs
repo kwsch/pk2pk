@@ -71,33 +71,41 @@ namespace pk2pk
             byte[] newdata = new Byte[136];
             int game = 0;
 
-            if (len == 100 && RB_I3.Checked)
+            if ((len == 80 || len == 100) && RB_I3.Checked)
             {
+                game = 4;
                 data = File.ReadAllBytes(path);
                 if (!verifychk(data)) goto invalidchk;
                 newdata = convertPK3toPK4(data);
                 if (RB_O5.Checked)
+                {
                     newdata = convertPK4toPK5(newdata);
+                    game = 5;
+                }
                 else if (RB_O6.Checked)
                 {
                     newdata = convertPK4toPK5(newdata);
                     newdata = convertPK5toPK6(newdata);
+                    game = 6;
                 }
 
-                game = 4;
             }
             else if ((len == 136 || len == 236) && RB_I4.Checked)
             {
+                game = 5;
                 data = File.ReadAllBytes(path);
-                if (!verifychk(data)) goto invalidchk;
+                if (!verifychk(data)) 
+                    goto invalidchk;
                 newdata = convertPK4toPK5(data);
                 if (RB_O6.Checked)
+                {
                     newdata = convertPK5toPK6(newdata);
-
-                game = 5;
+                    game = 6;
+                }
             }
             else if ((len == 136 || len == 220) && RB_I5.Checked)
             {
+                game = 6;
                 data = File.ReadAllBytes(path);
                 if (!verifychk(data)) goto invalidchk;
                 if (BitConverter.ToUInt32(data, 0x44) != 0) // if PTHGSS met data exists
@@ -105,8 +113,6 @@ namespace pk2pk
                     data = convertPK4toPK5(data);
                 }
                 newdata = convertPK5toPK6(data);
-
-                game = 6;
             }
             else
             {
@@ -135,7 +141,8 @@ namespace pk2pk
             if (RB_PKM.Checked && RB_O6.Checked)
                 ext = ".pkx";
             string newname = foldername + "\\" + filename + ext;
-            if (newname == path) newname = foldername + "\\" + filename + " - " + game.ToString() + "th" + ext;
+            if (newname == path) 
+                newname = foldername + "\\" + filename + " - " + game.ToString() + "th" + ext;
             File.WriteAllBytes(newname,newdata);
         quit:
             {
@@ -193,10 +200,9 @@ namespace pk2pk
             pk4[0x33] = (byte)(getMovePP(BitConverter.ToInt16(pk4, 0x2E), 2) * (5 + pk4[0x37]) / 5);
 
             // Copy IVs
-            pk4[0x38] = pk3[0x48];
-            pk4[0x39] = pk3[0x49];
-            pk4[0x3A] = pk3[0x4A];
-            pk4[0x3B] = (byte)(pk3[0x4B] & 0x3F);
+            uint IVs = BitConverter.ToUInt32(pk3, 0x48);
+            IVs &= 0x3FFFFFFF;
+            Array.Copy(BitConverter.GetBytes(IVs), 0, pk4, 0x38, 4);
             int abilnum = pk3[0x4B] >> 7;
             DataTable g3abiltable = Gen3Abilities();
             pk4[0x15] = (byte)(int)((g3abiltable.Rows[species][1 + abilnum]));
@@ -333,7 +339,7 @@ namespace pk2pk
                 // nickname detection
                 if (Array.IndexOf(names, nickname) < 0) // if it is not any of the species names
                 {
-                    pk4[0x3B] = 1 << 7; // set nickname flag
+                    pk4[0x3B] ^= 1 << 7; // set nickname flag
                 }
             }
 
@@ -730,7 +736,7 @@ namespace pk2pk
         private bool verifychk(byte[] input)
         {
             ushort checksum = 0;
-            if (input.Length == 100)
+            if (input.Length == 100 || input.Length == 80)
             {
                 for (int i = 32; i < 80; i += 2)
                 {
@@ -6464,6 +6470,17 @@ namespace pk2pk
         {
             pk2pk.G6Options f = new pk2pk.G6Options(this);
             f.ShowDialog();
+        }
+
+        private void B_Open_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "PKM File|*.pkm;*.3gpkm|All Files|*.*";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string path = ofd.FileName;
+                convert(path);
+            }
         }
     }
 }
