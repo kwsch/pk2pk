@@ -208,7 +208,7 @@
             this.B_Clear.Name = "B_Clear";
             this.B_Clear.Size = new System.Drawing.Size(40, 22);
             this.B_Clear.TabIndex = 8;
-            this.B_Clear.Text = "Clear Text";
+            this.B_Clear.Text = "Clear";
             this.B_Clear.UseVisualStyleBackColor = true;
             this.B_Clear.Click += new System.EventHandler(this.clear);
             // 

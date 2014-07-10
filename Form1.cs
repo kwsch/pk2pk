@@ -339,7 +339,7 @@ namespace pk2pk
                 // nickname detection
                 if (Array.IndexOf(names, nickname) < 0) // if it is not any of the species names
                 {
-                    pk4[0x3B] ^= 1 << 7; // set nickname flag
+                    pk4[0x3B] |= 1 << 7; // set nickname flag
                 }
             }
 
