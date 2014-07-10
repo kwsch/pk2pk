@@ -289,7 +289,6 @@ namespace pk2pk
                 speclang_es[species].ToUpper(),
             };
 
-
             string nickname = names[pk3[18] - 1];
             if (isegg)
             {
@@ -320,7 +319,7 @@ namespace pk2pk
                 for (int i = 0; i < 11; i++)
                 {
                     int val = pk3[0x8 + i];
-                    if (val == 0xFF)
+                    if (val == 0xFF || i == 10)
                     {
                         // Nickname is capped here
                         pk4[0x48 + 2 * i] = 0xFF;
@@ -351,7 +350,7 @@ namespace pk2pk
                 for (int i = 0; i < 8; i++)
                 {
                     int val = pk3[0x14 + i];
-                    if (val == 0xFF)
+                    if (val == 0xFF || i == 7)
                     {
                         // Nickname is capped here
                         pk4[0x68 + 2 * i] = 0xFF;
@@ -6237,7 +6236,8 @@ namespace pk2pk
         private int getBaseFriendship(int species)
         {
             int fshp = (int)Friendship().Rows[species][1];
-            return fshp;
+            // return fshp;
+            return 70;
         }
         private int getLevel(int species, uint exp)
         {
