@@ -447,7 +447,9 @@ namespace pk2pk
             pk5[0x7D] = (byte)moment.Day;
             //
             pk5[0x86] = pk5[0x87] = 0; // HGSS Data wiped
-
+            // Transfer ball over
+            if (pk4[0x86] > 0 && pk4[0x86] != 4)
+                pk5[0x83] = pk4[0x86];
             // Transfer Nickname and OT Name
             DataTable CT45 = Char4to5();
             byte[] nicknamestr = new Byte[24];
