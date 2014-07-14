@@ -59,7 +59,6 @@ namespace pk2pk
             return stringdata;
         }
         
-
         private void convert(string path)
         {
             FileInfo fi = new FileInfo(path);
@@ -258,8 +257,6 @@ namespace pk2pk
             pk4[0x84] = (byte)((pk3[0x47] & 0x80) | ((byte)getLevel(species, exp)));
 
             // Nickname and OT Name handling...
-
-
             byte[][] trash = new byte[8][];
             trash[1] = new byte[] { 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00 };
             trash[2] = new byte[] { 0x18, 0x20, 0x0D, 0x02, 0x42, 00, 00, 00, 00, 00, 00, 00, 0x48, 0xA1, 0x0C, 0x02, 0xE0, 0xFF };
@@ -389,24 +386,28 @@ namespace pk2pk
         private byte[] convertPK4toPK5(byte[] pk4)
         {
             byte[] pk5 = new Byte[136];
-
+            if (pk4[0x5F] < 0x10 && BitConverter.ToUInt16(pk4, 0x80) > 0x4000)
+            {
+                richTextBox1.AppendText("Already Gen 5 format.\r\n");
+                return pk4;
+            }
             Array.Copy(pk4, 0, pk5, 0, 136); // copy the data, now we adjust.
             
-            int[] nomoves = new int[] { 15, 19, 57, 70, 249, 127, 431, 250, 432 };
-            int movectr = 0;
-            for (int i = 0; i < 4; i++)
-            {
-                int move = BitConverter.ToUInt16(pk5,0x28+i*2);
-                if ((Array.IndexOf(nomoves, move) < 0) || ((i == 4) && (movectr == 0)))
-                {
-                    Array.Copy(pk5, 0x28 + i * 2, pk5, 0x28 + movectr * 2, 2);
-                    movectr++;
-                }
-            }
-            for (int i = 4; i > movectr; i--) // Clear out leftovers
-            {
-                pk5[0x28 + 2 * i] = pk5[0x28 - 2 * i] = 0;
-            }
+            //int[] nomoves = new int[] { 15, 19, 57, 70, 249, 127, 431, 250, 432 };
+            //int movectr = 0;
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    int move = BitConverter.ToUInt16(pk5,0x28+i*2);
+            //    if ((Array.IndexOf(nomoves, move) < 0) || ((i == 4) && (movectr == 0)))
+            //    {
+            //        Array.Copy(pk5, 0x28 + i * 2, pk5, 0x28 + movectr * 2, 2);
+            //        movectr++;
+            //    }
+            //}
+            //for (int i = 4; i > movectr; i--) // Clear out leftovers
+            //{
+            //    pk5[0x28 + 2 * i] = pk5[0x28 - 2 * i] = 0;
+            //}
 
             // zero out item
             pk5[0x0A] = pk5[0x0B] = 0;
@@ -511,6 +512,12 @@ namespace pk2pk
             // To transfer, we will go down the pkm offset list and fill it into the PKX list.
             byte[] pk6 = new Byte[232]; // Setup new array to store the new PKX
 
+            // Check if G4PKM
+            if (pk5[0x5F] < 0x10 && BitConverter.ToUInt16(pk5, 0x80) < 4000)
+            {
+                richTextBox1.AppendText("Supplied Gen 4 format. Converting.\r\n");
+                pk5 = convertPK4toPK5(pk5);
+            }
             // Upon transfer, the PID is also set as the Encryption Key.
             // Copy intro data, it's the same (Encrypt Key -> EXP)
             for (int i = 0; i < 0x14; i++) { pk6[i] = pk5[i]; }
@@ -708,16 +715,15 @@ namespace pk2pk
             // 01 - Not handled by OT
             // 07 - CA
             // 31 - USA
-            byte[] x90x = new byte[] { 0x00, 0x00, 0x00, 0x01, 0x07, 0x31, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)getBaseFriendship(species), 0x00, 0x01, 0x04, (byte)(rnd32() % 10), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            byte[] x90x = new byte[] { 0x00, 0x00, g6trgend, 0x01, (byte)subreg, (byte)country, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)getBaseFriendship(species), 0x00, 0x01, 0x04, (byte)(rnd32() % 10), 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
             Array.Copy(x90x, 0, pk6, 0x90, x90x.Length);
-            pk6[0x92] = g6trgend;
             // When transferred, friendship gets reset.
             pk6[0xCA] = (byte)getBaseFriendship(species);
 
             // Write Origin (USA California) - location is dependent on 3DS system that transfers.
             pk6[0xE0] = (byte)country;   
             pk6[0xE1] = (byte)subreg;   
-            pk6[0xE2] = (byte)_3DSreg;   
+            pk6[0xE2] = (byte)_3DSreg;
 
             // Fix Checksum
             uint chk = 0;
