@@ -414,7 +414,7 @@ namespace pk2pk
 
 
             for (int i = 0; i < 4; i++) // fix PP
-                pk5[0x30 + i] = (byte)getMovePP(BitConverter.ToUInt16(pk5, 0x28 + 2 * i), 1);
+                pk5[0x30 + i] = (byte)(getMovePP(BitConverter.ToUInt16(pk5, 0x28 + 2 * i), 1) * ((5 + pk5[0x34+i]) / 5));
 
             // fix nature
             pk5[0x41] = (byte)(BitConverter.ToUInt32(pk5, 0) % 0x19);
@@ -2567,7 +2567,7 @@ namespace pk2pk
             table.Rows.Add(197, 5, 5, 5);
             table.Rows.Add(198, 10, 10, 10);
             table.Rows.Add(199, 5, 5, 5);
-            table.Rows.Add(200, 15, 15, 15);
+            table.Rows.Add(200, 10, 10, 15);
             table.Rows.Add(201, 10, 10, 10);
             table.Rows.Add(202, 10, 10, 10);
             table.Rows.Add(203, 10, 10, 10);
