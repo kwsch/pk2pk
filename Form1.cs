@@ -414,7 +414,7 @@ namespace pk2pk
 
 
             for (int i = 0; i < 4; i++) // fix PP
-                pk5[0x30 + i] = (byte)(getMovePP(BitConverter.ToUInt16(pk5, 0x28 + 2 * i), 1) * ((5 + pk5[0x34+i]) / 5));
+                pk5[0x30 + i] = (byte)((getMovePP(BitConverter.ToUInt16(pk5, 0x28 + 2 * i), 1) * (5 + pk5[0x34+i])) / 5);
 
             // fix nature
             pk5[0x41] = (byte)(BitConverter.ToUInt32(pk5, 0) % 0x19);
