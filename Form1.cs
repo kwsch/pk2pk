@@ -422,7 +422,6 @@ namespace pk2pk
             // zero out platinum data
             pk5[0x44] = pk5[0x45] = pk5[0x46] = pk5[0x47] = 0;
 
-
             // Met / Crown Data Detection
             int species = BitConverter.ToInt16(pk5, 0x8);
             bool fateful = Convert.ToBoolean(BitConverter.ToUInt16(pk5, 0x40) & 0x1);
@@ -494,6 +493,11 @@ namespace pk2pk
             }
             // Reset Friendship
             pk5[0x14] = (byte)getBaseFriendship(species);
+
+            // Fix Level
+            pk5[0x84] &= 0x80;
+            uint exp = BitConverter.ToUInt32(pk5, 0x10);
+            pk5[0x84] |= (byte)getLevel(species, exp);
 
             // Fix Checksum
             ushort chk = 0;
