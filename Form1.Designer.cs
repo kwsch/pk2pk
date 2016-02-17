@@ -41,7 +41,7 @@
             this.B_Options = new System.Windows.Forms.Button();
             this.RB_PKM = new System.Windows.Forms.RadioButton();
             this.RB_PKN = new System.Windows.Forms.RadioButton();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.RTB_Output = new System.Windows.Forms.RichTextBox();
             this.B_Clear = new System.Windows.Forms.Button();
             this.pBar1 = new System.Windows.Forms.ProgressBar();
             this.B_Help = new System.Windows.Forms.Button();
@@ -190,17 +190,17 @@
             this.RB_PKN.Text = "PK#";
             this.RB_PKN.UseVisualStyleBackColor = true;
             // 
-            // richTextBox1
+            // RTB_Output
             // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.RTB_Output.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.richTextBox1.Location = new System.Drawing.Point(12, 108);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(332, 150);
-            this.richTextBox1.TabIndex = 7;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.WordWrap = false;
+            this.RTB_Output.Location = new System.Drawing.Point(12, 108);
+            this.RTB_Output.Name = "RTB_Output";
+            this.RTB_Output.ReadOnly = true;
+            this.RTB_Output.Size = new System.Drawing.Size(332, 150);
+            this.RTB_Output.TabIndex = 7;
+            this.RTB_Output.Text = "";
+            this.RTB_Output.WordWrap = false;
             // 
             // B_Clear
             // 
@@ -250,7 +250,7 @@
             this.Controls.Add(this.B_Help);
             this.Controls.Add(this.pBar1);
             this.Controls.Add(this.B_Clear);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.RTB_Output);
             this.Controls.Add(this.GB_Settings);
             this.Controls.Add(this.GB_OutGen);
             this.Controls.Add(this.GB_InGen);
@@ -284,7 +284,7 @@
         private System.Windows.Forms.GroupBox GB_Settings;
         private System.Windows.Forms.RadioButton RB_PKM;
         private System.Windows.Forms.RadioButton RB_PKN;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox RTB_Output;
         private System.Windows.Forms.Button B_Clear;
         private System.Windows.Forms.ProgressBar pBar1;
         private System.Windows.Forms.Button B_Help;

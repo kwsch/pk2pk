@@ -31,7 +31,7 @@
             this.B_Save = new System.Windows.Forms.Button();
             this.B_Cancel = new System.Windows.Forms.Button();
             this.CB_Country = new System.Windows.Forms.ComboBox();
-            this.CB_Region = new System.Windows.Forms.ComboBox();
+            this.CB_SubRegion = new System.Windows.Forms.ComboBox();
             this.CB_3DSReg = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -69,14 +69,15 @@
             this.CB_Country.Name = "CB_Country";
             this.CB_Country.Size = new System.Drawing.Size(121, 21);
             this.CB_Country.TabIndex = 2;
+            this.CB_Country.SelectedIndexChanged += new System.EventHandler(this.updateCountry);
             // 
-            // CB_Region
+            // CB_SubRegion
             // 
-            this.CB_Region.FormattingEnabled = true;
-            this.CB_Region.Location = new System.Drawing.Point(52, 39);
-            this.CB_Region.Name = "CB_Region";
-            this.CB_Region.Size = new System.Drawing.Size(121, 21);
-            this.CB_Region.TabIndex = 3;
+            this.CB_SubRegion.FormattingEnabled = true;
+            this.CB_SubRegion.Location = new System.Drawing.Point(52, 39);
+            this.CB_SubRegion.Name = "CB_SubRegion";
+            this.CB_SubRegion.Size = new System.Drawing.Size(121, 21);
+            this.CB_SubRegion.TabIndex = 3;
             // 
             // CB_3DSReg
             // 
@@ -120,7 +121,7 @@
             this.RB_M.Checked = true;
             this.RB_M.Location = new System.Drawing.Point(133, 98);
             this.RB_M.Name = "RB_M";
-            this.RB_M.Size = new System.Drawing.Size(37, 17);
+            this.RB_M.Size = new System.Drawing.Size(33, 17);
             this.RB_M.TabIndex = 8;
             this.RB_M.TabStop = true;
             this.RB_M.Text = "♂";
@@ -131,7 +132,7 @@
             this.RB_F.AutoSize = true;
             this.RB_F.Location = new System.Drawing.Point(133, 113);
             this.RB_F.Name = "RB_F";
-            this.RB_F.Size = new System.Drawing.Size(37, 17);
+            this.RB_F.Size = new System.Drawing.Size(31, 17);
             this.RB_F.TabIndex = 9;
             this.RB_F.Text = "♀";
             this.RB_F.UseVisualStyleBackColor = true;
@@ -167,7 +168,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.CB_3DSReg);
-            this.Controls.Add(this.CB_Region);
+            this.Controls.Add(this.CB_SubRegion);
             this.Controls.Add(this.CB_Country);
             this.Controls.Add(this.B_Cancel);
             this.Controls.Add(this.B_Save);
@@ -185,7 +186,7 @@
         private System.Windows.Forms.Button B_Save;
         private System.Windows.Forms.Button B_Cancel;
         private System.Windows.Forms.ComboBox CB_Country;
-        private System.Windows.Forms.ComboBox CB_Region;
+        private System.Windows.Forms.ComboBox CB_SubRegion;
         private System.Windows.Forms.ComboBox CB_3DSReg;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
