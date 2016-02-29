@@ -207,6 +207,7 @@ namespace pk2pk
         {
             G6Options f = new G6Options();
             f.ShowDialog();
+            Converter.updateConfig(subreg, country, _3DSreg, g6trname, g6trgend);
         }
 
         private void B_Open_Click(object sender, EventArgs e)
