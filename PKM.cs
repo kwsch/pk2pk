@@ -57,18 +57,19 @@ namespace pk2pk
 
             // Fill the Battle Stats back
             if (data.Length > 136)
-                Array.Copy(data, 136, sdata, 136, 100);
+                Array.Copy(data, 136, sdata, 136, data.Length - 136);
 
             return sdata;
         }
-        internal static byte[] decryptArray(byte[] ekm, uint seed = 0x10000)
+        internal static byte[] decryptArray(byte[] ekm)
         {
             byte[] pkm = (byte[])ekm.Clone();
 
             uint pv = BitConverter.ToUInt32(pkm, 0);
+            uint chk = BitConverter.ToUInt16(pkm, 6);
             uint sv = ((pv & 0x3E000) >> 0xD) % 24;
 
-            seed = seed > 0xFFFF ? pv : seed;
+            uint seed = chk;
 
             // Decrypt Blocks with RNG Seed
             for (int i = 8; i < 136; i += 2)
@@ -85,17 +86,17 @@ namespace pk2pk
 
             return pkm;
         }
-        internal static byte[] encryptArray(byte[] pkm, uint seed = 0x10000)
+        internal static byte[] encryptArray(byte[] pkm)
         {
-            // Shuffle
             uint pv = BitConverter.ToUInt32(pkm, 0);
             uint sv = ((pv & 0x3E000) >> 0xD) % 24;
 
+            uint chk = BitConverter.ToUInt16(pkm, 6);
             byte[] ekm = (byte[])pkm.Clone();
 
             ekm = shuffleArray(ekm, blockPositionInvert[sv]);
 
-            seed = seed > 0xFFFF ? pv : seed;
+            uint seed = chk;
 
             // Encrypt Blocks with RNG Seed
             for (int i = 8; i < 136; i += 2)
@@ -111,6 +112,21 @@ namespace pk2pk
 
             // Done
             return ekm;
+        }
+
+        /// <summary>
+        /// Checks to see if the PKM file is encrypted; if so, decrypts.
+        /// </summary>
+        /// <param name="pkm">Input byte array</param>
+        internal static void checkEncrypted(ref byte[] pkm)
+        {
+            if (pkm.Length != PK4.SIZE_STORED && pkm.Length != PK4.SIZE_PARTY && pkm.Length != PK5.SIZE_PARTY)
+                return; // bad
+
+            ushort chk = 0;
+            for (int i = 8; i < PK4.SIZE_STORED; i += 2) // Loop through the entire PKM
+                chk += BitConverter.ToUInt16(pkm, i);
+            pkm = chk != BitConverter.ToUInt16(pkm, 0x06) ? decryptArray(pkm) : pkm;
         }
 
         internal static int getUnownForm(uint PID)

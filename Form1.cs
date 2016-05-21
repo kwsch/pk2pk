@@ -61,6 +61,7 @@ namespace pk2pk
             {
                 game = 5;
                 data = File.ReadAllBytes(path);
+                PKM.checkEncrypted(ref data);
                 if (!PKX.verifychk(data))
                     goto invalidchk;
                 newdata = new PK4(data).convertToPK5().Data;
@@ -74,6 +75,7 @@ namespace pk2pk
             {
                 game = 6;
                 data = File.ReadAllBytes(path);
+                PKM.checkEncrypted(ref data);
                 if (!PKX.verifychk(data))
                     goto invalidchk;
                 if (BitConverter.ToUInt32(data, 0x44) != 0) // if PTHGSS met data exists
