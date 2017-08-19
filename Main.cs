@@ -37,8 +37,6 @@ namespace pk2pk
 
         private SaveFile SAV;
         private PKM Blank;
-        private bool reflectiveConvertPrompted;
-        private bool reflectiveConvertAllowed;
 
         private ConcurrentBag<string[]> output = new ConcurrentBag<string[]>();
         private bool log(string path, bool success, string comment)
@@ -57,6 +55,7 @@ namespace pk2pk
             return success;
         }
 
+        private bool reflectiveConvertAllowed;
         private bool checkCompatible(PKM pk)
         {
             if (pk.Species > SAV.MaxSpeciesID)
@@ -100,13 +99,6 @@ namespace pk2pk
             var converted = PKMConverter.convertToFormat(pk, t, out comment);
             if (converted == null)
             {
-                if (!reflectiveConvertPrompted)
-                {
-                    reflectiveConvertPrompted = true;
-                    var dr = Prompt(MessageBoxButtons.YesNo, "Incompatible conversion detected.", "Try reflective conversion?");
-                    if (dr == DialogResult.Yes)
-                        reflectiveConvertAllowed = true;
-                }
                 if (!reflectiveConvertAllowed)
                     return log(path, false, "Not converting via reflection.");
 
@@ -147,39 +139,35 @@ namespace pk2pk
         }
         private void ddDrop(object sender, DragEventArgs e)
         {
-            Type t = getType();
-            if (t == null)
-                return;
-            Blank = getBlank(t);
-            SAV = SaveUtil.getBlankSAV(Blank.Format, PKMConverter.OT_Name);
-
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             string path = files[0]; // open first D&D
             if (Directory.Exists(path))
                 files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
-
-            output = new ConcurrentBag<string[]>();
-            var convertCount = new ConcurrentBag<bool>();
-            RTB_Output.AppendText("----------" + Environment.NewLine);
-            Parallel.ForEach(files, file => { convertCount.Add(convert(file, t));});
-            RTB_Output.AppendText(string.Join(Environment.NewLine, output.SelectMany(s => s)));
-            Alert($"Converted {convertCount.Count(a => a)} of {files.Length} to {t.Name}.");
+            Process(files);
         }
-        private void B_Open_Click(object sender, EventArgs e)
+        private void Process(string[] files, bool silent = false)
         {
             Type t = getType();
             if (t == null)
                 return;
+
             Blank = getBlank(t);
             SAV = SaveUtil.getBlankSAV(Blank.Format, PKMConverter.OT_Name);
-
-            OpenFileDialog ofd = new OpenFileDialog { Filter = "PKM File|*.pkm|All Files|*.*" };
-            if (ofd.ShowDialog() != DialogResult.OK) return;
-            string path = ofd.FileName;
-
             output = new ConcurrentBag<string[]>();
-            convert(path, t);
+            var convertCount = new ConcurrentBag<bool>();
+            RTB_Output.AppendText("----------" + Environment.NewLine);
+            reflectiveConvertAllowed = CHK_Backwards.Checked;
+            Parallel.ForEach(files, file => convertCount.Add(convert(file, t)));
             RTB_Output.AppendText(string.Join(Environment.NewLine, output.SelectMany(s => s)));
+            if (!silent)
+                Alert($"Converted {convertCount.Count(a => a)} of {files.Length} to {t.Name}.");
+        }
+
+        private void B_Open_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog { Filter = "PKM File|*.pkm|All Files|*.*" };
+            if (ofd.ShowDialog() == DialogResult.OK)
+                Process(new[] {ofd.FileName}, true);
         }
 
         private void ClearOutput(object sender, EventArgs e) => RTB_Output.Clear();

@@ -36,6 +36,7 @@
             this.B_Open = new System.Windows.Forms.Button();
             this.CB_PKMTypes = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.CHK_Backwards = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // B_Options
@@ -108,12 +109,23 @@
             this.label1.TabIndex = 13;
             this.label1.Text = "Destination Format:";
             // 
+            // CHK_Backwards
+            // 
+            this.CHK_Backwards.AutoSize = true;
+            this.CHK_Backwards.Location = new System.Drawing.Point(139, 7);
+            this.CHK_Backwards.Name = "CHK_Backwards";
+            this.CHK_Backwards.Size = new System.Drawing.Size(218, 17);
+            this.CHK_Backwards.TabIndex = 14;
+            this.CHK_Backwards.Text = "Allow Incompatible Transfer (Backwards)";
+            this.CHK_Backwards.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(354, 231);
+            this.Controls.Add(this.CHK_Backwards);
             this.Controls.Add(this.B_Options);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.CB_PKMTypes);
@@ -141,6 +153,7 @@
         private System.Windows.Forms.Button B_Open;
         private System.Windows.Forms.ComboBox CB_PKMTypes;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox CHK_Backwards;
     }
 }
 
