@@ -41,12 +41,13 @@ namespace pk2pk
         }
         private void saveFields()
         {
-            PKMConverter.Country = (int)CB_Country.SelectedValue;
-            PKMConverter.Region = (int)CB_SubRegion.SelectedValue;
-            PKMConverter.ConsoleRegion = (int)CB_3DSReg.SelectedValue;
-            PKMConverter.OT_Gender = Convert.ToByte(RB_F.Checked);
-            PKMConverter.OT_Name = TB_TR.Text;
-            PKMConverter.Language = 2;
+            PKMConverter.UpdateConfig(
+                SUBREGION: (int)CB_SubRegion.SelectedValue, 
+                COUNTRY: (int)CB_Country.SelectedValue, 
+                _3DSREGION: (int)CB_3DSReg.SelectedValue, 
+                TRAINERNAME: TB_TR.Text, 
+                TRAINERGENDER: RB_F.Checked ? 1 : 0,
+                LANGUAGE: 2);
         }
         private void B_Close_Click(object sender, EventArgs e) => Close();
         private void B_Save_Click(object sender, EventArgs e) 
@@ -60,7 +61,7 @@ namespace pk2pk
         private static void setCountrySubRegion(ComboBox CB, string type)
         {
             int index = getIndex(CB);
-            CB.DataSource = Util.getCBList(type, "countries");
+            CB.DataSource = Util.GetCBList(type, "countries");
 
             if (index > 0 && index < CB.Items.Count)
                 CB.SelectedValue = index;

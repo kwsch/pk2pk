@@ -32,7 +32,6 @@ namespace pk2pk
                     .OrderByDescending(f => f.Name.Last())
                     .ToArray();
 
-        private PKM getBlank(Type t) => (PKM)Activator.CreateInstance(t, Enumerable.Repeat(null as PKM, t.GetConstructors()[0].GetParameters().Length).ToArray());
         private Type getType() => PKMTypes.FirstOrDefault(x => x.Name == CB_PKMTypes.Text);
 
         private SaveFile SAV;
@@ -56,47 +55,23 @@ namespace pk2pk
         }
 
         private bool reflectiveConvertAllowed;
-        private bool checkCompatible(PKM pk)
-        {
-            if (pk.Species > SAV.MaxSpeciesID)
-                return false;
-
-            if (pk.HeldItem > SAV.MaxItemID)
-                pk.HeldItem = 0;
-            if (pk.Nickname.Length > SAV.NickLength)
-                pk.Nickname = pk.Nickname.Substring(0, SAV.NickLength);
-            if (pk.OT_Name.Length > SAV.OTLength)
-                pk.OT_Name = pk.OT_Name.Substring(0, SAV.OTLength);
-            if (pk.Moves.Any(move => move > SAV.MaxMoveID))
-            {
-                pk.Moves = pk.Moves.Select(move => move <= SAV.MaxMoveID ? move : 0).ToArray();
-                pk.FixMoves();
-            }
-            if (pk.EVs.Any(ev => ev > SAV.MaxEV))
-                pk.EVs = pk.EVs.Select(ev => Math.Min(SAV.MaxEV, ev)).ToArray();
-            if (pk.IVs.Any(ev => ev > SAV.MaxEV))
-                pk.IVs = pk.IVs.Select(iv => Math.Min(SAV.MaxIV, iv)).ToArray();
-
-            return true;
-        }
         private bool convert(string path, Type t)
         {
             FileInfo fi = new FileInfo(path);
             bool prefer7 = fi.Extension.EndsWith("7");
             int genPref = prefer7 ? 7 : 6;
 
-            if (!PKX.getIsPKM(fi.Length))
+            if (!PKX.IsPKM(fi.Length))
                 return log(path, false, "Not a valid PKM size.");
 
-            var pk = PKMConverter.getPKMfromBytes(File.ReadAllBytes(path), prefer: genPref);
+            var pk = PKMConverter.GetPKMfromBytes(File.ReadAllBytes(path), prefer: genPref);
             if (pk.GetType() == t)
                 return log(path, false, "Matches desired format.");
 
             if (pk.Species <= 0)
                 return log(path, false, "Not a valid PKM.");
 
-            string comment;
-            var converted = PKMConverter.convertToFormat(pk, t, out comment);
+            var converted = PKMConverter.ConvertToType(pk, t, out string comment);
             if (converted == null)
             {
                 if (!reflectiveConvertAllowed)
@@ -104,7 +79,7 @@ namespace pk2pk
 
                 try
                 {
-                    if (!checkCompatible(pk))
+                    if (!SaveUtil.IsPKMCompatibleWithModifications(SAV, pk))
                         return log(path, false, "Unable to transfer with reflection.");
 
                     converted = Blank.Clone();
@@ -151,8 +126,8 @@ namespace pk2pk
             if (t == null)
                 return;
 
-            Blank = getBlank(t);
-            SAV = SaveUtil.getBlankSAV(Blank.Format, PKMConverter.OT_Name);
+            Blank = PKMConverter.GetBlank(t);
+            SAV = SaveUtil.GetBlankSAV(Blank.Format, PKMConverter.OT_Name);
             output = new ConcurrentBag<string[]>();
             var convertCount = new ConcurrentBag<bool>();
             RTB_Output.AppendText("----------" + Environment.NewLine);
